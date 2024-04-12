@@ -93,7 +93,7 @@ class Tablero:
             restas = ['➖'] * int((self.tamano ** 2) // 2)
             self.asignacion(sumas, restas)
 
-        if 26 <= valor_dificultad >= 50:
+        if 26 <= valor_dificultad <= 50:
             sumas = ['➕'] * int((self.tamano ** 2) // 2.5)
             restas = ['➖'] * int((self.tamano ** 2) // 2.5)
             self.asignacion(sumas, restas)
