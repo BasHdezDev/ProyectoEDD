@@ -54,7 +54,7 @@ class Juego:
                 return
 
             if node_value == '👽':
-                pass
+                return
 
             else:
                 self.tablero.cambiar_casilla(self.pos_x[0], self.pos_x[1], '🔳')
@@ -102,7 +102,7 @@ class Juego:
                 return
 
             if node_value == '🤖':
-                pass
+                return
 
             else:
                 self.tablero.cambiar_casilla(self.pos_y[0], self.pos_y[1], '🔳')
@@ -197,5 +197,6 @@ def menu_turnos(tablero, juego):
             juego.movimiento_y()
 
         menu_turnos(tablero, juego)
+
 
 menu_crear_tablero()
