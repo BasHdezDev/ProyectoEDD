@@ -17,8 +17,8 @@ class Juego:
     def iniciar_y(self):
         self.pos_y = self.tablero.posicion_inicial_y()
 
-    def movimiento_x(self):   #TODO MOVIMIENTO EN X TEMPORAL
-        direccion = input("Movimiento:\n1: arriba\n2: abajo\n3: izquierda\n4: derecha\n->  ")
+    def movimiento_x(self):
+        direccion = input("Movimiento:\n1: Arriba\n2: Abajo\n3: Izquierda\n4: Derecha\n->  ")
 
         nueva_fila, nueva_col = self.pos_x
 
@@ -37,20 +37,28 @@ class Juego:
         if self.tablero.verificar_posicion(nueva_fila, nueva_col):
             node_value = self.tablero.obtener_posicion(nueva_fila, nueva_col)
 
-            if node_value == '⛔':
-                print("La celda está bloqueada, intente de nuevo")
+            if node_value == '➕':
+                self.tablero.cambiar_casilla(self.pos_x[0], self.pos_x[1], '🔳')
+                self.tablero.cambiar_casilla(nueva_fila, nueva_col, '🤖')
+                if self.vida_x < 50:
+                    self.vida_x += 10
+                self.pos_x = (nueva_fila, nueva_col)
                 return
 
-            if node_value == '🤖':
-                fila_salto, col_salto = self.saltar_dos_veces(nueva_fila, nueva_col, direccion, self.pos_x)
+            if node_value == '➖':
                 self.tablero.cambiar_casilla(self.pos_x[0], self.pos_x[1], '🔳')
-                self.pos_x = (fila_salto, col_salto)
-                self.tablero.cambiar_casilla(fila_salto, col_salto, '❌')
+                self.tablero.cambiar_casilla(nueva_fila, nueva_col, '🤖')
+                if self.vida_x > 0:
+                    self.vida_x -= 10
+                self.pos_x = (nueva_fila, nueva_col)
                 return
+
+            if node_value == '👽':
+                pass
 
             else:
                 self.tablero.cambiar_casilla(self.pos_x[0], self.pos_x[1], '🔳')
-                self.tablero.cambiar_casilla(nueva_fila, nueva_col, '❌')
+                self.tablero.cambiar_casilla(nueva_fila, nueva_col, '🤖')
             self.pos_x = (nueva_fila, nueva_col)
             return
 
@@ -58,44 +66,66 @@ class Juego:
             print("No puedes hacer ese movimiento")
             return
 
-    def movimiento_y(self): #TODO MOVIMIENTO EN Y TEMPORAL
+    def movimiento_y(self):
 
-            direccion = str(random.randint(1, 4))
-            nueva_fila, nueva_col = self.pos_y
+        direccion = str(random.randint(1, 4))
+        nueva_fila, nueva_col = self.pos_y
 
-            if direccion == "1":
-                nueva_fila -= 1     #Arriba
-            elif direccion == "2":
-                nueva_fila += 1     #Abajo
-            elif direccion == "3":
-                nueva_col -= 1      #Izquierda
-            elif direccion == "4":
-                nueva_col += 1      #Derecha
-            else:
+        if direccion == "1":
+            nueva_fila -= 1     #Arriba
+        elif direccion == "2":
+            nueva_fila += 1     #Abajo
+        elif direccion == "3":
+            nueva_col -= 1      #Izquierda
+        elif direccion == "4":
+            nueva_col += 1      #Derecha
+        else:
+            return
+
+        if self.tablero.verificar_posicion(nueva_fila, nueva_col):
+            node_value = self.tablero.obtener_posicion(nueva_fila, nueva_col)
+
+            if node_value == '➕':
+                self.tablero.cambiar_casilla(self.pos_y[0], self.pos_y[1], '🔳')
+                self.tablero.cambiar_casilla(nueva_fila, nueva_col, '👽')
+                if self.vida_y < 50:
+                    self.vida_y += 10
+                self.pos_y = (nueva_fila, nueva_col)
                 return
 
+            if node_value == '➖':
+                self.tablero.cambiar_casilla(self.pos_y[0], self.pos_y[1], '🔳')
+                self.tablero.cambiar_casilla(nueva_fila, nueva_col, '👽')
+                if self.vida_y > 0:
+                    self.vida_y -= 10
+                self.pos_y = (nueva_fila, nueva_col)
+                return
 
-            if self.tablero.verificar_posicion(nueva_fila, nueva_col):
-                valor_nodo = self.tablero.obtener_posicion(nueva_fila, nueva_col)
+            if node_value == '🤖':
+                pass
 
-                if valor_nodo == '⛔':
-                    return
-
-                if valor_nodo == '❌':
-                    fila_salto, col_salto = self.saltar_dos_veces(nueva_fila, nueva_col, direccion, self.pos_y)
-                    self.tablero.cambiar_casilla(self.pos_y[0], self.pos_y[1], '🔳')
-                    self.pos_y = (fila_salto, col_salto)
-                    self.tablero.cambiar_casilla(fila_salto, col_salto, '🤖')
-                    return
-
-                else:
-                    self.tablero.cambiar_casilla(self.pos_y[0], self.pos_y[1], '🔳')
-                    self.tablero.cambiar_casilla(nueva_fila, nueva_col, '🤖')
+            else:
+                self.tablero.cambiar_casilla(self.pos_y[0], self.pos_y[1], '🔳')
+                self.tablero.cambiar_casilla(nueva_fila, nueva_col, '👽')
 
                 self.pos_y = (nueva_fila, nueva_col)
                 return
-            else:
-                return
+        else:
+            return
+
+    def verificar_ganador(self):
+
+        if self.vida_y <= 0:
+            print(f"La vida del alien es {self.vida_y}.\n")
+
+            return "\n!!!!!!!!!!!!!!!!El jugador X gana!!!!!!!!!!!!!!!"
+        if self.vida_x <= 0:
+
+            print(f"Tú vida es {self.vida_x}.\n")
+
+            return "\nLa maquina gana :("
+        else:
+            return None
 
 
 def menu_crear_tablero():
@@ -117,15 +147,14 @@ def menu_inicio(tablero, juego):
         print("\n Iniciando el juego \n")
         if opcion == "1":
 
-            dificultad = int(input("\nIngresa la dificultad (De 1 a 100)\nSiendo 100 la más díficil y 1 la más fácil \n->"))
-            print("")
+            dificultad = int(input("\nIngresa la dificultad (De 1 a 100)\n"
+                                   "Siendo 100 la más díficil y 1 la más fácil \n->"))
 
             tablero.celdas()
             tablero.asignar_por_nivel_de_dificultad(dificultad)
             juego.iniciar_x()
             juego.iniciar_y()
-            tablero.mostrar_tablero()
-
+            menu_turnos(tablero, juego)
             break
 
         elif opcion == "2":
@@ -136,8 +165,37 @@ def menu_inicio(tablero, juego):
             continue
 
 
-def menu_turnos(tablero, juego):   #TODO IMPLEMENTAR EL SISTEMA DE MOVIMIENTOS
-    pass                           #TODO IMPLEMENTAR EL SISTEMA DE VIDA, DE SUMAS Y RESTAS
+def menu_turnos(tablero, juego):
+    while True:
+        tablero.mostrar_tablero()
+        print(f"Tú - {juego.vida_x} <-------> {juego.vida_y} - Alien")
 
+        print("\nTurno del jugador X\n")
+        opcion_x = input("1. Moverse\n2. Atacar\n-> ")
+        if opcion_x == "1":
+            juego.movimiento_x()
+        elif opcion_x == "2":
+            continue
+        else:
+            print("Ingrese 1 o 2")
+            continue
+
+        ganador = juego.verificar_ganador()
+        if ganador:
+            print(ganador)
+            quit()
+
+        print("\nTurno de la maquina\n")
+
+        opcion_y = str(random.randint(1, 2))
+        if opcion_y == "1":
+            juego.movimiento_y()
+        if opcion_y == "2":
+            #if verificar_ataque:
+                #atacar
+            #else:
+            juego.movimiento_y()
+
+        menu_turnos(tablero, juego)
 
 menu_crear_tablero()
